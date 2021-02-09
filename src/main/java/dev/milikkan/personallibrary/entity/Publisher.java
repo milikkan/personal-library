@@ -1,5 +1,6 @@
-package dev.milikkan.personallibrary.model;
+package dev.milikkan.personallibrary.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Publisher {
 
@@ -23,8 +25,12 @@ public class Publisher {
 
     private String explanation;
 
-    public Publisher(String name, String explanation) {
-        this.name = name;
-        this.explanation = explanation;
+    @Override
+    public String toString() {
+        return "Publisher{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", explanation='" + explanation + '\'' +
+                '}';
     }
 }

@@ -1,5 +1,6 @@
-package dev.milikkan.personallibrary.model;
+package dev.milikkan.personallibrary.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Author {
 
@@ -22,8 +24,12 @@ public class Author {
     @ManyToMany(mappedBy = "authors")
     private final List<Book> books = new ArrayList<>();
 
-    public Author(String fullName, String explanation) {
-        this.fullName = fullName;
-        this.explanation = explanation;
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", fullName='" + fullName + '\'' +
+                ", explanation='" + explanation + '\'' +
+                '}';
     }
 }

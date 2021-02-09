@@ -1,6 +1,6 @@
 package dev.milikkan.personallibrary.repository;
 
-import dev.milikkan.personallibrary.model.Book;
+import dev.milikkan.personallibrary.entity.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

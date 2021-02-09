@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../static/style/main.css" th:href="@{/style/main.css}">
+    <title>Kitap Ekle</title>
+</head>
+<body>
+<h1>Kütüphanem</h1>
+<div class="container">
+    <nav class="menu">
+        <ul>
+            <li><a href="/">Tüm Kitaplar</a></li>
+            <li><a href="/books/new">Kitap Ekle</a></li>
+            <li><a href="#">Kitap Ara</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <h3>Yeni Kitap Girişi:</h3>
+        <form action="/books/new" method="post" th:object="${newBook}">
+            <div class="form-control">
+                <label for="title">Kitap İsmi: </label>
+                <input id="title" type="text" th:field="*{title}">
+            </div>
+            <div class="form-control">
+                <label for="subtitle">Alt Başlık: </label>
+                <input id="subtitle" type="text" th:field="*{subtitle}">
+            </div>
+            <div class="form-control">
+                <label for="series">Kitap Seri İsmi: </label>
+                <input id="series" type="text" th:field="*{series}">
+            </div>
+            <div class="form-control">
+                <label for="isbn">ISBN: </label>
+                <input id="isbn" type="text" th:field="*{isbn}">
+            </div>
+            <div class="form-control">
+                <label for="author">Yazar Seç: </label>
+                <select id="author" name="author" multiple="multiple" th:field="*{authors}">
+                    <option th:each="author : ${allAuthors}"
+                            th:value="${author.id}"
+                            th:text="${author.fullName}">yazar</option>
+                </select>
+                <button>Ekle</button>
+                <a href="#">Yazar Tanımla</a>
+            </div>
+            <div class="form-control">
+                <label for="publisher">Yayınevi Seç: </label>
+                <select id="publisher" name="publisher" th:field="*{publisher}">
+                    <option th:each="publisher : ${publishers}"
+                            th:value="${publisher.id}"
+                            th:text="${publisher.name}">yayınevi</option>
+                </select>
+                <a href="#">Yayınevi Tanımla</a>
+            </div>
+            <div class="form-control">
+                <label for="explanation">Kitap Açıklaması: </label>
+                <textarea id="explanation" name="explanation" cols="30" rows="10" th:field="*{explanation}">
+                </textarea>
+            </div>
+            <button type="submit">Kaydet</button>
+        </form>
+    </main>
+</div>
+</body>
+</html>
