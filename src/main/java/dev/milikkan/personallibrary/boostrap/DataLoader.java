@@ -133,6 +133,5 @@ public class DataLoader {
         );
         ddd.getAuthors().add(ericEvans);
         bookRepository.save(ddd);
-
     }
 }

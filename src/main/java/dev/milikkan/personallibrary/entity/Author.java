@@ -23,13 +23,4 @@ public class Author {
 
     @ManyToMany(mappedBy = "authors")
     private final List<Book> books = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "Author{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", explanation='" + explanation + '\'' +
-                '}';
-    }
 }

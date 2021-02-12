@@ -2,7 +2,8 @@
 <html lang="tr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/style/main.css" th:href="@{/style/main.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="" th:href="@{/style/main.css}" rel="stylesheet">
     <title>Kitap Ekle</title>
 </head>
 <body>
@@ -15,52 +16,101 @@
             <li><a href="#">Kitap Ara</a></li>
         </ul>
     </nav>
-    <main class="content">
-        <h3>Yeni Kitap Girişi:</h3>
-        <form action="/books/new" method="post" th:object="${newBook}">
-            <div class="form-control">
-                <label for="title">Kitap İsmi: </label>
-                <input id="title" type="text" th:field="*{title}">
+    <main>
+        <h2>Yeni Kitap Girişi:</h2>
+        <form th:action="@{/books/new}" method="post" th:object="${newBook}">
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="bookTitle" class="form-label">Kitap adı: </label>
+                    <input type="text" class="form-control" id="bookTitle" th:field="*{title}" placeholder="Yeni kitap" >
+                </div>
+                <div class="col">
+                    <label for="bookSubtitle" class="form-label">Kitap alt adı: </label>
+                    <input type="text" class="form-control" id="bookSubtitle" th:field="*{subtitle}" >
+                </div>
             </div>
-            <div class="form-control">
-                <label for="subtitle">Alt Başlık: </label>
-                <input id="subtitle" type="text" th:field="*{subtitle}">
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="bookSeries" class="form-label">Kitap Seri Adı: </label>
+                    <input type="text" class="form-control" id="bookSeries" th:field="*{series}" >
+                </div>
+                <div class="col">
+                    <label for="bookIsbn" class="form-label">ISBN: </label>
+                    <input type="text" class="form-control" id="bookIsbn" th:field="*{isbn}" >
+                </div>
             </div>
-            <div class="form-control">
-                <label for="series">Kitap Seri İsmi: </label>
-                <input id="series" type="text" th:field="*{series}">
+
+            <div class="row mb-3">
+                <label for="bookAuthorsSelect" class="form-label">Yazar Seçimi: </label>
+                <div class="input-group">
+                    <select class="form-select" id="bookAuthorsSelect">
+                        <option selected>Mevcut Yazarlar</option>
+                        <option th:each="author : ${allAuthors}"
+                                th:text="${author.fullName}"
+                                th:value="${author.explanation}">yazar</option>
+                    </select>
+                    <button id="addAuthorFromSelect" class="btn btn-outline-primary" type="button">
+                        Yazar Listesine Ekle
+                    </button>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="isbn">ISBN: </label>
-                <input id="isbn" type="text" th:field="*{isbn}">
+            <div id="newAuthorList" th:each="author, authorStat : ${authorListForNewBook}">
+                <!-- new author row -->
+                <div id="lastRow" class="row mb-3">
+                    <div class="col">
+                        <label for="addAuthorFullName0" class="form-label">Yazar İsmi: </label>
+                        <input type="text" class="form-control" id="addAuthorFullName0" th:field="*{authors[__${authorStat.index}__].fullName}">
+                    </div>
+                    <div class="col">
+                        <label for="addAuthorExplanation0" class="form-label">Yazar Açıklaması: </label>
+                        <input type="text" class="form-control" id="addAuthorExplanation0" th:field="*{authors[__${authorStat.index}__].explanation}">
+                    </div>
+                    <div class="col align-self-end">
+                        <button class="btn btn-primary active-add-btn" type="button">Yeni Ekle</button>
+                        <button class="btn btn-danger active-remove-btn disabled" type="button">Kaldır</button>
+                    </div>
+                </div>
+                <!-- end new author row -->
             </div>
-            <div class="form-control">
-                <label for="author">Yazar Seç: </label>
-                <select id="author" name="author" multiple="multiple" th:field="*{authors}">
-                    <option th:each="author : ${allAuthors}"
-                            th:value="${author.id}"
-                            th:text="${author.fullName}">yazar</option>
-                </select>
-                <button>Ekle</button>
-                <a href="#">Yazar Tanımla</a>
+
+            <div class="row mb-3">
+                <label for="bookPublisherSelect" class="form-label">Yayınevi Seç: </label>
+                <div class="input-group">
+                    <select class="form-select" id="bookPublisherSelect">
+                        <option selected>Mevcut Yayınevleri</option>
+                        <option th:each="publisher : ${allPublishers}"
+                                th:text="${publisher.name}"
+                                th:value="${publisher.explanation}">yazar</option>
+                    </select>
+                    <button id="addPublisherFromSelect" class="btn btn-outline-primary" type="button">
+                        Yayınevini Ekle
+                    </button>
+                </div>
             </div>
-            <div class="form-control">
-                <label for="publisher">Yayınevi Seç: </label>
-                <select id="publisher" name="publisher" th:field="*{publisher}">
-                    <option th:each="publisher : ${publishers}"
-                            th:value="${publisher.id}"
-                            th:text="${publisher.name}">yayınevi</option>
-                </select>
-                <a href="#">Yayınevi Tanımla</a>
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="addPublisherName" class="form-label">Yayınevi Adı: </label>
+                    <input type="text" class="form-control" id="addPublisherName" th:field="*{publisher.name}">
+                </div>
+                <div class="col">
+                    <label for="addPublisherExplanation" class="form-label">Yayınevi Açıklaması: </label>
+                    <input type="text" class="form-control" id="addPublisherExplanation" th:field="*{publisher.explanation}">
+                </div>
             </div>
-            <div class="form-control">
-                <label for="explanation">Kitap Açıklaması: </label>
-                <textarea id="explanation" name="explanation" cols="30" rows="10" th:field="*{explanation}">
-                </textarea>
+
+            <div class="row mb-3">
+                <label for="bookExplanation" class="form-label">Kitap Açıklaması: </label>
+                <textarea class="form-control" id="bookExplanation" rows="3"></textarea>
             </div>
-            <button type="submit">Kaydet</button>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-lg">Kaydet</button>
+            </div>
         </form>
     </main>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+<script th:src="@{/script/script.js}"></script>
 </body>
 </html>

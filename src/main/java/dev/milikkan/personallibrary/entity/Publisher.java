@@ -24,13 +24,4 @@ public class Publisher {
     private final List<Book> books = new ArrayList<>();
 
     private String explanation;
-
-    @Override
-    public String toString() {
-        return "Publisher{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", explanation='" + explanation + '\'' +
-                '}';
-    }
 }

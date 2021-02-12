@@ -10,7 +10,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Book {
 
@@ -23,26 +22,24 @@ public class Book {
     private String series;
     private String isbn;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "book_author",
             joinColumns = @JoinColumn(name = "bookId"),
             inverseJoinColumns = @JoinColumn(name = "authorId"))
-    private final List<Author> authors = new ArrayList<>();
+    private List<Author> authors = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Publisher publisher;
 
     private String explanation;
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", subtitle='" + subtitle + '\'' +
-                ", series='" + series + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", explanation='" + explanation + '\'' +
-                '}';
+    public Book(Long id, String title, String subtitle, String series, String isbn, Publisher publisher, String explanation) {
+        this.id = id;
+        this.title = title;
+        this.subtitle = subtitle;
+        this.series = series;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.explanation = explanation;
     }
 }
