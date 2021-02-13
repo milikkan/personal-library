@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="" th:href="@{/style/main.css}" rel="stylesheet">
+    <title>Kitap Detayları</title>
+</head>
+<body>
+<h1>Kütüphanem</h1>
+<div class="container">
+    <nav>
+        <ul>
+            <li><a href="/">Tüm Kitaplar</a></li>
+            <li><a href="/authors">Tüm Yazarlar</a></li>
+            <li><a href="/publishers">Tüm Yayınevleri</a></li>
+            <li><a href="/books/new">Kitap Ekle</a></li>
+            <li><a href="#">Kitap Ara</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2>Kitap Detayı:</h2>
+        <table class="table table-light table-bordered border-primary align-middle">
+            <tbody>
+            <tr>
+                <td class="table-primary border-primary">Kitap adı</td>
+                <td th:text="${book.title}">kitap adı</td>
+                <td class="table-primary border-primary">ISBN</td>
+                <td th:text="${book.isbn}">alt adı</td>
+            </tr>
+            <tr>
+                <td class="table-primary border-primary">Kitap alt adı</td>
+                <td th:text="${book.subtitle}"></td>
+                <td class="table-primary border-primary"
+                    th:text="${#lists.size(book.authors) > 1 ? 'Yazarları' : 'Yazarı'}">yazar</td>
+                <td>
+                    <th:block th:each="author : ${book.authors}">
+                        <span th:text="${author.fullName}">yazar adı</span><br>
+                    </th:block>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-primary border-primary">Kitap seri adı</td>
+                <td th:text="${book.series}">seri adı</td>
+                <td class="table-primary border-primary">Yayınevi</td>
+                <td th:text="${book.publisher.name}">yayınevi adı</td>
+            </tr>
+            <tr>
+                <td class="table-primary border-primary">Açıklama</td>
+                <td colspan="3" th:text="${book.explanation}">açıklama</td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+</div>
+
+</body>
+</html>

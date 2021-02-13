@@ -19,27 +19,31 @@
         </ul>
     </nav>
     <main>
-        <h2>Yeni Kitap Girişi:</h2>
-        <form th:action="@{/books/new}" method="post" th:object="${newBook}">
+        <h2>Kitap Bilgilerini Güncelle:</h2>
+        <form method="post" th:object="${bookForUpdate}" th:action="'/books/' + ${bookId} + '/update'">
             <div class="row mb-3">
                 <div class="col">
                     <label for="bookTitle" class="form-label">Kitap adı: </label>
-                    <input type="text" class="form-control" id="bookTitle" th:field="*{title}" placeholder="Yeni kitap" >
+                    <input type="text" class="form-control" id="bookTitle"
+                           th:field="*{title}" th:value="*{title}">
                 </div>
                 <div class="col">
                     <label for="bookSubtitle" class="form-label">Kitap alt adı: </label>
-                    <input type="text" class="form-control" id="bookSubtitle" th:field="*{subtitle}" >
+                    <input type="text" class="form-control" id="bookSubtitle"
+                           th:field="*{subtitle}" th:value="*{subtitle}">
                 </div>
             </div>
 
             <div class="row mb-3">
                 <div class="col">
                     <label for="bookSeries" class="form-label">Kitap Seri Adı: </label>
-                    <input type="text" class="form-control" id="bookSeries" th:field="*{series}" >
+                    <input type="text" class="form-control" id="bookSeries"
+                           th:field="*{series}" th:value="*{series}">
                 </div>
                 <div class="col">
                     <label for="bookIsbn" class="form-label">ISBN: </label>
-                    <input type="text" class="form-control" id="bookIsbn" th:field="*{isbn}" >
+                    <input type="text" class="form-control" id="bookIsbn"
+                           th:field="*{isbn}" th:value="*{isbn}">
                 </div>
             </div>
 
@@ -57,23 +61,27 @@
                     </button>
                 </div>
             </div>
-            <div id="newAuthorList" th:each="author, authorStat : ${authorListForNewBook}">
-                <!-- new author row -->
-                <div id="lastRow" class="row mb-3">
+            <div id="newAuthorList">
+                <!--author row-->
+                <div id="lastRow" class="row mb-3" th:each="author, authorStat : ${existingAuthors}">
                     <div class="col">
                         <label for="addAuthorFullName0" class="form-label">Yazar İsmi: </label>
-                        <input type="text" class="form-control" id="addAuthorFullName0" th:field="*{authors[__${authorStat.index}__].fullName}">
+                        <input type="text" class="form-control" id="addAuthorFullName0"
+                               th:field="*{authors[__${authorStat.index}__].fullName}"
+                               th:value="${author.fullName}">
                     </div>
                     <div class="col">
                         <label for="addAuthorExplanation0" class="form-label">Yazar Açıklaması: </label>
-                        <input type="text" class="form-control" id="addAuthorExplanation0" th:field="*{authors[__${authorStat.index}__].explanation}">
+                        <input type="text" class="form-control" id="addAuthorExplanation0"
+                               th:field="*{authors[__${authorStat.index}__].explanation}"
+                               th:value="${author.explanation}">
                     </div>
                     <div class="col align-self-end">
                         <button class="btn btn-primary active-add-btn" type="button">Yeni Ekle</button>
                         <button class="btn btn-danger active-remove-btn disabled" type="button">Kaldır</button>
                     </div>
                 </div>
-                <!-- end new author row -->
+                <!--end author row-->
             </div>
 
             <div class="row mb-3">
@@ -94,21 +102,24 @@
             <div class="row mb-3">
                 <div class="col">
                     <label for="addPublisherName" class="form-label">Yayınevi Adı: </label>
-                    <input type="text" class="form-control" id="addPublisherName" th:field="*{publisher.name}">
+                    <input type="text" class="form-control" id="addPublisherName"
+                           th:field="*{publisher.name}" th:value="*{publisher.name}">
                 </div>
                 <div class="col">
                     <label for="addPublisherExplanation" class="form-label">Yayınevi Açıklaması: </label>
-                    <input type="text" class="form-control" id="addPublisherExplanation" th:field="*{publisher.explanation}">
+                    <input type="text" class="form-control" id="addPublisherExplanation"
+                           th:field="*{publisher.explanation}"
+                           th:value="*{publisher.explanation}">
                 </div>
             </div>
 
             <div class="row mb-3">
                 <label for="bookExplanation" class="form-label">Kitap Açıklaması: </label>
                 <textarea class="form-control" id="bookExplanation" rows="3"
-                          th:field="*{explanation}"></textarea>
+                          th:field="*{explanation}" th:value="*{explanation}"></textarea>
             </div>
             <div class="col-12">
-                <button type="submit" class="btn btn-primary btn-lg">Kaydet</button>
+                <button type="submit" class="btn btn-primary btn-lg">Güncelle</button>
             </div>
         </form>
     </main>

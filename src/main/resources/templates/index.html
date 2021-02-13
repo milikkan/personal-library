@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="" th:href="@{/style/main.css}">
     <title>Kütüphanem</title>
 </head>
 <body>
@@ -11,14 +12,17 @@
         <nav class="menu">
             <ul>
                 <li><a href="/">Tüm Kitaplar</a></li>
+                <li><a href="/authors">Tüm Yazarlar</a></li>
+                <li><a href="/publishers">Tüm Yayınevleri</a></li>
                 <li><a href="/books/new">Kitap Ekle</a></li>
                 <li><a href="#">Kitap Ara</a></li>
             </ul>
         </nav>
-        <main class="content">
-            <table>
-                <thead>
-                <tr>
+        <main>
+            <table class="table table-striped table-secondary table-hover table-bordered border-dark align-middle">
+                <thead class="text-center">
+                <tr class="table-dark">
+                    <th>#</th>
                     <th>Kitap Adı</th>
                     <th>Yazarı</th>
                     <th>Yayınevi</th>
@@ -26,7 +30,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="book : ${books}">
+                <tr th:each="book, bookStat : ${books}">
+                    <td>
+                        <span th:text="${bookStat.index + 1}">1</span>
+                    </td>
                     <td>
                         <span th:text="${book.title}">kitap adı</span><br>
                         <span style="font-style: italic" th:text="${book.subtitle}">alt ad</span>
@@ -37,10 +44,10 @@
                         </div>
                     </td>
                     <td th:text="${book.publisher.name}">yayınevi</td>
-                    <td>
-                        <button>Detay</button>
-                        <button>Güncelle</button>
-                        <button>Sil</button>
+                    <td class="text-center">
+                        <a class="btn btn-success" th:href="|/books/${book.id}|">Detay</a>
+                        <a class="btn btn-secondary" th:href="|/books/${book.id}/update|">Güncelle</a>
+                        <a class="btn btn-danger" th:href="|/books/${book.id}/delete|">Sil</a>
                     </td>
                 </tr>
                 </tbody>
