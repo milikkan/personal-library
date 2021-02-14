@@ -1,9 +1,7 @@
 package dev.milikkan.personallibrary.controller;
 
-import dev.milikkan.personallibrary.entity.Author;
 import dev.milikkan.personallibrary.entity.Book;
 import dev.milikkan.personallibrary.entity.Publisher;
-import dev.milikkan.personallibrary.exception.BookNotFoundException;
 import dev.milikkan.personallibrary.exception.PublisherNotFoundException;
 import dev.milikkan.personallibrary.service.PublisherService;
 import lombok.AllArgsConstructor;
@@ -54,7 +52,7 @@ public class PublisherController {
         // TODO: add not found exception
         return publisherService.findById(publisherId)
                 .get().getBooks().stream()
-                .map(book -> book.getTitle())
+                .map(Book::getTitle)
                 .collect(Collectors.toList());
     }
 

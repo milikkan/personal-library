@@ -1,6 +1,5 @@
 package dev.milikkan.personallibrary.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

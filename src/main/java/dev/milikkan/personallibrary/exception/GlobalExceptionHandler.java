@@ -24,4 +24,8 @@ public class GlobalExceptionHandler {
         return "error/publisher-not-found-error";
     }
 
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public String handleAuthorNotFoundException() {
+        return "error/author-not-found-error";
+    }
 }
