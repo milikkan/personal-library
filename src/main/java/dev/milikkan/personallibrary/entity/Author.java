@@ -21,6 +21,7 @@ public class Author {
     private String fullName;
     private String explanation;
 
+
     @ManyToMany(mappedBy = "authors")
     private final List<Book> books = new ArrayList<>();
 }

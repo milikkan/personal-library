@@ -1,5 +1,6 @@
 package dev.milikkan.personallibrary.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class Publisher {
 
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "publisher")
     private final List<Book> books = new ArrayList<>();
 

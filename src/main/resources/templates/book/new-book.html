@@ -18,10 +18,10 @@
             <li><a href="#">Kitap Ara</a></li>
         </ul>
     </nav>
-    <main>
-        <h2>Yeni Kitap Girişi:</h2>
+    <main class="bg-body p-3 mb-5 shadow rounded">
+        <h2 class="bg-secondary rounded p-2 text-light">Yeni Kitap Girişi:</h2>
         <form th:action="@{/books/new}" method="post" th:object="${newBook}">
-            <div class="row mb-3">
+            <div class="row my-3">
                 <div class="col">
                     <label for="bookTitle" class="form-label">Kitap adı: </label>
                     <input type="text" class="form-control" id="bookTitle" th:field="*{title}" placeholder="Yeni kitap" >
@@ -43,9 +43,9 @@
                 </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row mb-3 border border-secondary border-3 rounded p-2">
                 <label for="bookAuthorsSelect" class="form-label">Yazar Seçimi: </label>
-                <div class="input-group">
+                <div class="input-group mb-4">
                     <select class="form-select" id="bookAuthorsSelect">
                         <option selected>Mevcut Yazarlar</option>
                         <option th:each="author : ${allAuthors}"
@@ -56,8 +56,8 @@
                         Yazar Listesine Ekle
                     </button>
                 </div>
-            </div>
-            <div id="newAuthorList" th:each="author, authorStat : ${authorListForNewBook}">
+
+            <div id="newAuthorList" th:each="author, authorStat : ${authorListForNewBook}" class="border-top border-secondary border-2 p-2 mb-1">
                 <!-- new author row -->
                 <div id="lastRow" class="row mb-3">
                     <div class="col">
@@ -75,10 +75,10 @@
                 </div>
                 <!-- end new author row -->
             </div>
-
-            <div class="row mb-3">
+            </div>
+            <div class="row mb-3 border border-secondary border-3 rounded p-2">
                 <label for="bookPublisherSelect" class="form-label">Yayınevi Seç: </label>
-                <div class="input-group">
+                <div class="input-group mb-4">
                     <select class="form-select" id="bookPublisherSelect">
                         <option selected>Mevcut Yayınevleri</option>
                         <option th:each="publisher : ${allPublishers}"
@@ -89,9 +89,10 @@
                         Yayınevini Ekle
                     </button>
                 </div>
-            </div>
 
-            <div class="row mb-3">
+
+            <div class="border-top border-secondary border-2 p-2">
+                <div class="row mb-1">
                 <div class="col">
                     <label for="addPublisherName" class="form-label">Yayınevi Adı: </label>
                     <input type="text" class="form-control" id="addPublisherName" th:field="*{publisher.name}">
@@ -100,8 +101,9 @@
                     <label for="addPublisherExplanation" class="form-label">Yayınevi Açıklaması: </label>
                     <input type="text" class="form-control" id="addPublisherExplanation" th:field="*{publisher.explanation}">
                 </div>
+                </div>
             </div>
-
+            </div>
             <div class="row mb-3">
                 <label for="bookExplanation" class="form-label">Kitap Açıklaması: </label>
                 <textarea class="form-control" id="bookExplanation" rows="3"

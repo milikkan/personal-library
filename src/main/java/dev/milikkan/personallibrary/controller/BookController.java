@@ -82,12 +82,8 @@ public class BookController {
     }
 
     @GetMapping("/{bookId}/update")
-    public String updateBookForm(
-            @PathVariable Long bookId,
-            @ModelAttribute(name = "allAuthors") List<Author> allAuthors,
-            @ModelAttribute(name = "allPublishers") List<Publisher> allPublishers,
-            Model model)
-    {
+    public String updateBookForm(@PathVariable Long bookId, Model model) {
+
         Book bookForUpdate = bookService.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 

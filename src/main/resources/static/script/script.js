@@ -117,6 +117,3 @@ addPublisherFromSelectBtn.addEventListener("click", () => {
     }
     options[0].selected = true;
 }*/
-
-addNewAuthorBtn.addEventListener("click", addNewAuthorRow);
-removeNewAuthorBtn.addEventListener("click", removeNewAuthorRow);

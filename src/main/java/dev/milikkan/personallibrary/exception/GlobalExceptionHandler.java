@@ -19,5 +19,9 @@ public class GlobalExceptionHandler {
         return "error/book-not-found-error";
     }
 
+    @ExceptionHandler(PublisherNotFoundException.class)
+    public String handlePublisherNotFoundException() {
+        return "error/publisher-not-found-error";
+    }
 
 }

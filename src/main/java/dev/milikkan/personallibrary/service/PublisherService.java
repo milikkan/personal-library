@@ -18,6 +18,18 @@ public class PublisherService {
         return publisherRepository.findAll();
     }
 
+    public Optional<Publisher> findById(Long id) {
+        return publisherRepository.findById(id);
+    }
+
+    public void deleteById(Long id) {
+        publisherRepository.deleteById(id);
+    }
+
+    public Publisher save(Publisher publisher) {
+        return publisherRepository.save(publisher);
+    }
+
     public Optional<Publisher> sanitizePublisher(Publisher incoming) {
         return this.findAll().stream()
                 .filter(p -> p.getName().equals(incoming.getName()))

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/authors")
 public class AuthorController {
 
-    @GetMapping("/")
+    @GetMapping({"/", ""})
     public String listAllAuthors(Model model) {
 
         return "author/list-authors";

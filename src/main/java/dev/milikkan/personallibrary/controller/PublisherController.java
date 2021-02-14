@@ -1,44 +1,66 @@
 package dev.milikkan.personallibrary.controller;
 
 import dev.milikkan.personallibrary.entity.Author;
+import dev.milikkan.personallibrary.entity.Book;
 import dev.milikkan.personallibrary.entity.Publisher;
+import dev.milikkan.personallibrary.exception.BookNotFoundException;
+import dev.milikkan.personallibrary.exception.PublisherNotFoundException;
+import dev.milikkan.personallibrary.service.PublisherService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/publishers")
+@AllArgsConstructor
 public class PublisherController {
 
-    @GetMapping("/")
-    public String listAllPublishers(Model model) {
+    private final PublisherService publisherService;
 
+    @GetMapping({"/", ""})
+    public String listAllPublishers(Model model) {
+        model.addAttribute("allPublishers", publisherService.findAll());
         return "publisher/list-publishers";
     }
 
     @GetMapping("/{publisherId}/update")
     public String updatePublisherForm(@PathVariable Long publisherId, Model model) {
+        Publisher publisherForUpdate = publisherService.findById(publisherId)
+                .orElseThrow(() -> new PublisherNotFoundException(publisherId));
 
+        model.addAttribute("publisherForUpdate", publisherForUpdate);
         return "publisher/update-publisher";
     }
 
     @PostMapping("/{publisherId}/update")
-    public String updatePublisher(@ModelAttribute(name = "publisherForUpdate") Publisher publisherForUpdate,
-                               @PathVariable Long publisherId)
+    public String updatePublisher(
+            @PathVariable Long publisherId,
+            @ModelAttribute(name = "publisherForUpdate") Publisher publisherForUpdate)
     {
-
+        Publisher oldPublisher = publisherService.findById(publisherId).get();
+        oldPublisher.setName(publisherForUpdate.getName());
+        oldPublisher.setExplanation(publisherForUpdate.getExplanation());
+        publisherService.save(oldPublisher);
         return "redirect:/publishers/";
     }
 
-    @GetMapping("/{publisherId}")
-    public String showPublisherDetails(@PathVariable Long publisherId, Model model) {
-
-        return "publisher/publisher-details";
+    @ResponseBody
+    @GetMapping("/{publisherId}/books")
+    public List<String> getPublisherBookList(@PathVariable Long publisherId) {
+        // TODO: add not found exception
+        return publisherService.findById(publisherId)
+                .get().getBooks().stream()
+                .map(book -> book.getTitle())
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{publisherId}/delete")
     public String deletePublisher(@PathVariable Long publisherId) {
-
+        publisherService.deleteById(publisherId);
         return "redirect:/publishers/";
     }
 }
