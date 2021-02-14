@@ -11,7 +11,7 @@
 <div class="container">
     <nav>
         <ul>
-            <li><a href="/">Tüm Kitaplar</a></li>
+            <li><a href="/books">Tüm Kitaplar</a></li>
             <li><a href="/authors">Tüm Yazarlar</a></li>
             <li><a href="/publishers">Tüm Yayınevleri</a></li>
             <li><a href="/books/new">Kitap Ekle</a></li>
@@ -20,7 +20,7 @@
     </nav>
     <main>
         <h2>Kitap Bilgilerini Güncelle:</h2>
-        <form method="post" th:object="${bookForUpdate}" th:action="'/books/' + ${bookId} + '/update'">
+        <form method="post" th:object="${bookForUpdate}" th:action="'/books/' + ${bookForUpdate.id} + '/update'">
             <div class="row mb-3">
                 <div class="col">
                     <label for="bookTitle" class="form-label">Kitap adı: </label>
@@ -63,7 +63,7 @@
             </div>
             <div id="newAuthorList">
                 <!--author row-->
-                <div id="lastRow" class="row mb-3" th:each="author, authorStat : ${existingAuthors}">
+                <div id="lastRow" class="row mb-3" th:each="author, authorStat : ${bookForUpdate.authors}">
                     <div class="col">
                         <label for="addAuthorFullName0" class="form-label">Yazar İsmi: </label>
                         <input type="text" class="form-control" id="addAuthorFullName0"

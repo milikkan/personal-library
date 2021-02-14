@@ -4,119 +4,103 @@ import dev.milikkan.personallibrary.entity.Author;
 import dev.milikkan.personallibrary.entity.Book;
 import dev.milikkan.personallibrary.entity.Publisher;
 import dev.milikkan.personallibrary.exception.BookNotFoundException;
-import dev.milikkan.personallibrary.repository.AuthorRepository;
-import dev.milikkan.personallibrary.repository.BookRepository;
-import dev.milikkan.personallibrary.repository.PublisherRepository;
+import dev.milikkan.personallibrary.service.AuthorService;
+import dev.milikkan.personallibrary.service.BookService;
+import dev.milikkan.personallibrary.service.PublisherService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Controller
+@RequestMapping("/books")
 public class BookController {
 
-    private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
-    private final PublisherRepository publisherRepository;
-
-    @GetMapping("/")
-    public String homePage(Model model) {
-        model.addAttribute("books", bookRepository.findAll());
-        return "index";
-    }
+    private final BookService bookService;
+    private final AuthorService authorService;
+    private final PublisherService publisherService;
 
     @ModelAttribute(name = "newBook")
-    public Book book() {
+    public Book newBook() {
         return new Book();
     }
 
-    @GetMapping("/books/new")
-    public String newBookForm(Model model) {
-        model.addAttribute("allAuthors", authorRepository.findAll());
-        model.addAttribute("allPublishers", publisherRepository.findAll());
-        model.addAttribute("authorListForNewBook", new ArrayList<Author>().add(new Author()));
-        return "new-book";
+    @ModelAttribute(name = "allBooks")
+    public List<Book> allBooks() {
+        return bookService.findAll();
     }
 
-    @PostMapping("/books/new")
+    @ModelAttribute(name = "allAuthors")
+    public List<Author> allAuthors() {
+        return authorService.findAll();
+    }
+
+    @ModelAttribute(name = "allPublishers")
+    public List<Publisher> allPublishers() {
+        return publisherService.findAll();
+    }
+
+    @GetMapping({"/", ""})
+    public String listAllBooks(
+            @ModelAttribute(name = "allBooks") List<Book> allBooks)
+    {
+        return "book/list-books";
+    }
+
+    @GetMapping("/new")
+    public String newBookForm(
+            @ModelAttribute(name = "allAuthors") List<Author> allAuthors,
+            @ModelAttribute(name = "allPublishers") List<Publisher> allPublishers,
+            Model model)
+    {
+        model.addAttribute("authorListForNewBook",
+                new ArrayList<Author>().add(new Author()));
+
+        return "book/new-book";
+    }
+
+    @PostMapping("/new")
     public String saveBook(Book newBook) {
-        // handle incoming author list
-        var allAuthors = authorRepository.findAll();
         var incomingAuthorList = newBook.getAuthors();
-        var checkedAuthorList = new ArrayList<Author>();
-        // if name and explanation completely match -> use the one from db
-        var allAuthorNames = allAuthors.stream()
-                .map(Author::getFullName)
-                .collect(Collectors.toList());
+        newBook.setAuthors(
+                authorService.sanitizeAuthorList(incomingAuthorList, false)
+        );
 
-        var allAuthorExplanations = allAuthors.stream()
-                .map(Author::getExplanation)
-                .collect(Collectors.toList());
-
-        for (Author author : incomingAuthorList) {
-            if (allAuthorNames.contains(author.getFullName())
-                    && (allAuthorExplanations.contains(author.getExplanation())))
-            {
-                var found = allAuthors.stream()
-                        .filter(a ->
-                                a.getFullName().equals(author.getFullName()) &&
-                                a.getExplanation().equals(author.getExplanation()))
-                        .findFirst();
-                found.ifPresent(checkedAuthorList::add);
-            } else {
-                checkedAuthorList.add(author);
-            }
-        }
-        newBook.setAuthors(checkedAuthorList);
-
-        // handle incoming publisher
         var incomingPublisher = newBook.getPublisher();
-        var allPublishers = publisherRepository.findAll();
-        var allPublisherNames = allPublishers.stream()
-                .map(Publisher::getName)
-                .collect(Collectors.toList());
-        var allPublisherExplanations = allPublishers.stream()
-                .map(Publisher::getExplanation)
-                .collect(Collectors.toList());
+        publisherService.sanitizePublisher(incomingPublisher)
+                .ifPresent(newBook::setPublisher);
 
-        if (allPublisherNames.contains(incomingPublisher.getName())
-                && (allPublisherExplanations.contains(incomingPublisher.getExplanation())))
-        {
-            var found = allPublishers.stream()
-                    .filter(p ->
-                            p.getName().equals(incomingPublisher.getName()) &&
-                                    p.getExplanation().equals(incomingPublisher.getExplanation()))
-                    .findFirst();
-            found.ifPresent(newBook::setPublisher);
-        }
-
-        bookRepository.save(newBook);
-        return "redirect:/";
+        bookService.save(newBook);
+        return "redirect:/books";
     }
 
-    @GetMapping("/books/{bookId}/update")
-    public String updateBookForm(@PathVariable Long bookId, Model model) {
-        model.addAttribute("allAuthors", authorRepository.findAll());
-        model.addAttribute("allPublishers", publisherRepository.findAll());
-
-        Book bookForUpdate = bookRepository.findById(bookId)
+    @GetMapping("/{bookId}/update")
+    public String updateBookForm(
+            @PathVariable Long bookId,
+            @ModelAttribute(name = "allAuthors") List<Author> allAuthors,
+            @ModelAttribute(name = "allPublishers") List<Publisher> allPublishers,
+            Model model)
+    {
+        Book bookForUpdate = bookService.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
         model.addAttribute("bookForUpdate", bookForUpdate);
-        model.addAttribute("bookId", bookForUpdate.getId());
-        model.addAttribute("existingAuthors", bookForUpdate.getAuthors());
-        return "update-book";
+        return "book/update-book";
     }
 
-    @PostMapping("/books/{bookId}/update")
-    public String updateBook(@ModelAttribute(name = "bookForUpdate") Book bookForUpdate,
-                             @PathVariable Long bookId)
+    @PostMapping("/{bookId}/update")
+    public String updateBook(
+            @PathVariable Long bookId,
+            @ModelAttribute(name = "bookForUpdate") Book bookForUpdate)
     {
-        Book oldBook = bookRepository.findById(bookId).get();
+        Book oldBook = bookService.findById(bookId).get();
         oldBook.setTitle(bookForUpdate.getTitle());
         oldBook.setSubtitle(bookForUpdate.getSubtitle());
         oldBook.setSeries(bookForUpdate.getSeries());
@@ -124,78 +108,36 @@ public class BookController {
         oldBook.setExplanation(bookForUpdate.getExplanation());
 
         // handle incoming author list
-        var allAuthors = authorRepository.findAll();
         var incomingAuthorList = bookForUpdate.getAuthors();
-        var checkedAuthorList = new ArrayList<Author>();
-        // if name and explanation completely match -> use the one from db
-        var allAuthorNames = allAuthors.stream()
-                .map(Author::getFullName)
-                .collect(Collectors.toList());
+        oldBook.setAuthors(
+                authorService.sanitizeAuthorList(incomingAuthorList, true)
+        );
 
-        var allAuthorExplanations = allAuthors.stream()
-                .map(Author::getExplanation)
-                .collect(Collectors.toList());
-
-        for (Author author : incomingAuthorList) {
-            if (allAuthorNames.contains(author.getFullName())
-                    && (allAuthorExplanations.contains(author.getExplanation())))
-            {
-                var found = allAuthors.stream()
-                        .filter(a ->
-                                a.getFullName().equals(author.getFullName()) &&
-                                        a.getExplanation().equals(author.getExplanation()))
-                        .findFirst();
-                found.ifPresent(checkedAuthorList::add);
-            } else {
-                authorRepository.save(author);
-                checkedAuthorList.add(author);
-            }
-        }
-
-        oldBook.setAuthors(checkedAuthorList);
-        oldBook.getAuthors().forEach(a -> System.out.println(a.getFullName()));
         // handle incoming publisher
         var incomingPublisher = bookForUpdate.getPublisher();
-        var allPublishers = publisherRepository.findAll();
-        var allPublisherNames = allPublishers.stream()
-                .map(Publisher::getName)
-                .collect(Collectors.toList());
-        var allPublisherExplanations = allPublishers.stream()
-                .map(Publisher::getExplanation)
-                .collect(Collectors.toList());
-
-        if (allPublisherNames.contains(incomingPublisher.getName())
-                && (allPublisherExplanations.contains(incomingPublisher.getExplanation())))
-        {
-            var found = allPublishers.stream()
-                    .filter(p ->
-                            p.getName().equals(incomingPublisher.getName()) &&
-                                    p.getExplanation().equals(incomingPublisher.getExplanation()))
-                    .findFirst();
-            found.ifPresent(oldBook::setPublisher);
+        var found = publisherService.sanitizePublisher(incomingPublisher);
+        if (found.isPresent()) {
+            oldBook.setPublisher(found.get());
         } else {
-            oldBook.setPublisher(bookForUpdate.getPublisher());
+            oldBook.setPublisher(incomingPublisher);
         }
 
-        bookRepository.save(oldBook);
-        return "redirect:/";
+        bookService.save(oldBook);
+        return "redirect:/books";
     }
 
-    @GetMapping("/books/{bookId}")
+    @GetMapping("/{bookId}")
     public String showBookDetails(@PathVariable Long bookId, Model model) {
-        Book book = bookRepository.findById(bookId)
+        Book book = bookService.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
         model.addAttribute("book", book);
 
-        return "book-details";
+        return "book/book-details";
     }
 
-    @GetMapping("/books/{bookId}/delete")
+    @GetMapping("/{bookId}/delete")
     public String deleteBook(@PathVariable Long bookId) {
-
-        bookRepository.deleteById(bookId);
-
-        return "redirect:/";
+        bookService.deleteById(bookId);
+        return "redirect:/books";
     }
-
 }

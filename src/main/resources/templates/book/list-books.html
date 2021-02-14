@@ -11,7 +11,7 @@
     <div class="container">
         <nav class="menu">
             <ul>
-                <li><a href="/">Tüm Kitaplar</a></li>
+                <li><a href="/books">Tüm Kitaplar</a></li>
                 <li><a href="/authors">Tüm Yazarlar</a></li>
                 <li><a href="/publishers">Tüm Yayınevleri</a></li>
                 <li><a href="/books/new">Kitap Ekle</a></li>
@@ -30,7 +30,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="book, bookStat : ${books}">
+                <tr th:each="book, bookStat : ${allBooks}">
                     <td>
                         <span th:text="${bookStat.index + 1}">1</span>
                     </td>

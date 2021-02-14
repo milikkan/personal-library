@@ -11,12 +11,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleException() {
-        return "error";
+        return "error/error";
     }
 
     @ExceptionHandler(BookNotFoundException.class)
     public String handleBookNotFoundException() {
-        return "book-not-found-error";
+        return "error/book-not-found-error";
     }
 
 

@@ -10,6 +10,7 @@ const addPublisherFromSelectBtn = document.getElementById("addPublisherFromSelec
 
 let rowIndex = 0;
 
+
 const addNewAuthorRow = (e) => {
     rowIndex++;
     const prevRow = document.getElementById("lastRow");
@@ -100,6 +101,22 @@ addPublisherFromSelectBtn.addEventListener("click", () => {
     publisherNameInput.value= select.text;
     publisherExpInput.value = select.value;
 });
+
+/*function sortOptions(select) {
+    var options = select.options;
+    var optionsArray = [];
+    for (var i = 0; i < options.length; i++) {
+        optionsArray.push(options[i]);
+    }
+    optionsArray = optionsArray.sort(function (a, b) {
+        return a.innerHTML.toLowerCase().charCodeAt(0) - b.innerHTML.toLowerCase().charCodeAt(0);
+    });
+
+    for (var i = 0; i <= options.length; i++) {
+        options[i] = optionsArray[i];
+    }
+    options[0].selected = true;
+}*/
 
 addNewAuthorBtn.addEventListener("click", addNewAuthorRow);
 removeNewAuthorBtn.addEventListener("click", removeNewAuthorRow);
