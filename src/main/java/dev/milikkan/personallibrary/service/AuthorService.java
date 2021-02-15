@@ -27,8 +27,8 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-    public void deleteById(Long id) {
-        authorRepository.deleteById(id);
+    public void delete(Author author) {
+        authorRepository.delete(author);
     }
 
     public List<Author> sanitizeAuthorList(List<Author> incomingList, boolean willSaveNewAuthor) {

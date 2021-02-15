@@ -130,7 +130,12 @@ public class BookController {
 
     @GetMapping("/{bookId}/delete")
     public String deleteBook(@PathVariable Long bookId) {
-        bookService.deleteById(bookId);
+        bookService.findById(bookId)
+                .ifPresentOrElse(
+                        bookService::delete,
+                        () -> {
+                            throw new BookNotFoundException(bookId);
+                        });
         return "redirect:/books";
     }
 }

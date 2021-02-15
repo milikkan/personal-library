@@ -28,7 +28,6 @@ public class AuthorController {
     @ResponseBody
     @GetMapping("/{authorId}/books")
     public List<String> getAuthorBookList(@PathVariable Long authorId) {
-        // TODO: add not found exception
         return authorService.findById(authorId)
                 .get().getBooks().stream()
                 .map(Book::getTitle)
@@ -58,8 +57,12 @@ public class AuthorController {
 
     @GetMapping("/{authorId}/delete")
     public String deleteAuthor(@PathVariable Long authorId) {
-        authorService.deleteById(authorId);
+        authorService.findById(authorId)
+                .ifPresentOrElse(
+                        authorService::delete,
+                        () -> {
+                            throw new AuthorNotFoundException(authorId);
+                        });
         return "redirect:/authors/";
     }
-
 }

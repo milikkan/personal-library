@@ -26,7 +26,7 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public void deleteById(Long id) {
-        bookRepository.deleteById(id);
+    public void delete(Book book) {
+        bookRepository.delete(book);
     }
 }

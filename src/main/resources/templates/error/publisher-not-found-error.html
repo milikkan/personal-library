@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{template :: placeholder(~{::title}, ~{::main}, ~{})}">
 <head>
-    <meta charset="UTF-8">
     <title>Hata</title>
 </head>
 <body>
-    <h1 style="text-align: center">Yayınevi bulunamadı...</h1>
-    <p><a href="/publishers">Tüm yayınevleri sayfasına git.</a></p>
+<main class="container shadow p-5 my-5 rounded text-center bg-danger">
+    <h1 class="fs-2 text-center text-white fw-bold">HATA!</h1>
+    <p class="fs-3 text-center text-white mt-1 mb-0">Yayınevi bulunamadı...</p>
+</main>
 </body>
 </html>

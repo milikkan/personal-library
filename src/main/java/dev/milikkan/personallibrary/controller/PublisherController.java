@@ -2,6 +2,7 @@ package dev.milikkan.personallibrary.controller;
 
 import dev.milikkan.personallibrary.entity.Book;
 import dev.milikkan.personallibrary.entity.Publisher;
+import dev.milikkan.personallibrary.exception.AuthorNotFoundException;
 import dev.milikkan.personallibrary.exception.PublisherNotFoundException;
 import dev.milikkan.personallibrary.service.PublisherService;
 import lombok.AllArgsConstructor;
@@ -58,7 +59,13 @@ public class PublisherController {
 
     @GetMapping("/{publisherId}/delete")
     public String deletePublisher(@PathVariable Long publisherId) {
-        publisherService.deleteById(publisherId);
+        publisherService.findById(publisherId)
+                .ifPresentOrElse(
+                        publisherService::delete,
+                        () -> {
+                            throw new PublisherNotFoundException(publisherId);
+                        }
+                );
         return "redirect:/publishers/";
     }
 }

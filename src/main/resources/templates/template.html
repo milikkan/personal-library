@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org"
+      th:fragment="placeholder(title, main, js)">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="" th:href="@{/style/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" href="" th:href="@{/style/main.css}">
+    <title th:replace="${title}">Template Title</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+    <div class="container">
+        <a class="navbar-brand fs-3" href="/books">Kütüphanem</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="/books">Tüm Kitaplar</a>
+                <a class="nav-link" href="/authors">Tüm Yazarlar</a>
+                <a class="nav-link" href="/publishers">Tüm Yayınevleri</a>
+                <a class="nav-link me-4" href="/books/new">Kitap Ekle</a>
+                <a class="nav-link" href="/books/search">Kitap Ara</a>
+            </div>
+
+        </div>
+    </div>
+</nav>
+<main th:replace="${main}">Template main content</main>
+<script th:src="@{/script/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:replace="${js}"></script>
+</body>
+</html>

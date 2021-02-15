@@ -22,8 +22,8 @@ public class PublisherService {
         return publisherRepository.findById(id);
     }
 
-    public void deleteById(Long id) {
-        publisherRepository.deleteById(id);
+    public void delete(Publisher publisher) {
+        publisherRepository.delete(publisher);
     }
 
     public Publisher save(Publisher publisher) {
