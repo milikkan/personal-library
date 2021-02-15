@@ -2,7 +2,6 @@ package dev.milikkan.personallibrary.controller;
 
 import dev.milikkan.personallibrary.entity.Book;
 import dev.milikkan.personallibrary.entity.Publisher;
-import dev.milikkan.personallibrary.exception.AuthorNotFoundException;
 import dev.milikkan.personallibrary.exception.PublisherNotFoundException;
 import dev.milikkan.personallibrary.service.PublisherService;
 import lombok.AllArgsConstructor;

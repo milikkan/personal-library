@@ -2,6 +2,7 @@ package dev.milikkan.personallibrary.controller;
 
 import dev.milikkan.personallibrary.entity.Author;
 import dev.milikkan.personallibrary.entity.Book;
+import dev.milikkan.personallibrary.entity.BookSearch;
 import dev.milikkan.personallibrary.entity.Publisher;
 import dev.milikkan.personallibrary.exception.BookNotFoundException;
 import dev.milikkan.personallibrary.service.AuthorService;
@@ -17,7 +18,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @Controller
-@RequestMapping("/books")
 public class BookController {
 
     private final BookService bookService;
@@ -44,18 +44,15 @@ public class BookController {
         return publisherService.findAll();
     }
 
-    @GetMapping({"/", ""})
+    @GetMapping({"/", "", "index", "/books"})
     public String listAllBooks(
             @ModelAttribute(name = "allBooks") List<Book> allBooks)
     {
         return "book/list-books";
     }
 
-    @GetMapping("/new")
-    public String newBookForm(
-            @ModelAttribute(name = "allAuthors") List<Author> allAuthors,
-            @ModelAttribute(name = "allPublishers") List<Publisher> allPublishers,
-            Model model)
+    @GetMapping("books/new")
+    public String newBookForm(Model model)
     {
         model.addAttribute("authorListForNewBook",
                 new ArrayList<Author>().add(new Author()));
@@ -63,7 +60,7 @@ public class BookController {
         return "book/new-book";
     }
 
-    @PostMapping("/new")
+    @PostMapping("books/new")
     public String saveBook(Book newBook) {
         var incomingAuthorList = newBook.getAuthors();
         newBook.setAuthors(
@@ -78,7 +75,7 @@ public class BookController {
         return "redirect:/books";
     }
 
-    @GetMapping("/{bookId}/update")
+    @GetMapping("books/{bookId}/update")
     public String updateBookForm(@PathVariable Long bookId, Model model) {
 
         Book bookForUpdate = bookService.findById(bookId)
@@ -88,7 +85,7 @@ public class BookController {
         return "book/update-book";
     }
 
-    @PostMapping("/{bookId}/update")
+    @PostMapping("books/{bookId}/update")
     public String updateBook(
             @PathVariable Long bookId,
             @ModelAttribute(name = "bookForUpdate") Book bookForUpdate)
@@ -119,7 +116,7 @@ public class BookController {
         return "redirect:/books";
     }
 
-    @GetMapping("/{bookId}")
+    @GetMapping("books/{bookId}")
     public String showBookDetails(@PathVariable Long bookId, Model model) {
         Book book = bookService.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
@@ -128,7 +125,7 @@ public class BookController {
         return "book/book-details";
     }
 
-    @GetMapping("/{bookId}/delete")
+    @GetMapping("books/{bookId}/delete")
     public String deleteBook(@PathVariable Long bookId) {
         bookService.findById(bookId)
                 .ifPresentOrElse(
@@ -137,5 +134,28 @@ public class BookController {
                             throw new BookNotFoundException(bookId);
                         });
         return "redirect:/books";
+    }
+
+    @ModelAttribute(name = "searchResults")
+    public List<Book> searchCriteria() {
+        return new ArrayList<>();
+    }
+
+
+    @GetMapping("/books/search")
+    public String searchBooksForm(@ModelAttribute(name = "searchResults") List<Book> results,
+            Model model) {
+        model.addAttribute("bookSearch", new BookSearch());
+        model.addAttribute("searchResults", results);
+
+        return "book/search-books";
+    }
+
+    @PostMapping("/books/search")
+    public String searchBooks(@ModelAttribute BookSearch bookSearch,
+                              Model model) {
+        model.addAttribute("searchResults", bookService.search(bookSearch));
+        System.out.println(bookSearch.getBookName());
+        return "book/search-books";
     }
 }

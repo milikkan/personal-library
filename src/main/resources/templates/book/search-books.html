@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{template :: placeholder(~{::title}, ~{::main}, ~{})}">
+<head>
+    <title>Kitap Ara</title>
+</head>
+<body>
+<main class="container bg-body p-3 mt-3 shadow rounded">
+    <h2 class="fs-2 pb-2 text-secondary">Arama Kriterleri:</h2>
+    <form th:action="@{/books/search}" th:object="${bookSearch}" method="post">
+        <div class="row my-3">
+            <div class="col">
+                <label for="bookSearchTitle" class="form-label">Kitap adı: </label>
+                <input type="text" class="form-control" id="bookSearchTitle" th:field="*{bookName}">
+            </div>
+            <div class="col">
+                <label for="bookSearchSeries" class="form-label">Kitap seri adı: </label>
+                <input type="text" class="form-control" id="bookSearchSeries" th:field="*{bookSeries}">
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col">
+                <label for="bookSearchISBN" class="form-label">ISBN: </label>
+                <input type="text" class="form-control" id="bookSearchISBN" th:field="*{isbn}">
+            </div>
+            <div class="col">
+                <label for="bookSearchAuthorName" class="form-label">Yazar adı: </label>
+                <input type="text" class="form-control" id="bookSearchAuthorName" th:field="*{authorName}">
+            </div>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Kitap Ara</button>
+        </div>
+    </form>
+    <ul>
+        <li th:each="book : ${searchResults}" th:text="${book.title}"></li>
+    </ul>
+</main>
+</body>
+</html>
