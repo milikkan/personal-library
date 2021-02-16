@@ -28,13 +28,48 @@
                 <input type="text" class="form-control" id="bookSearchAuthorName" th:field="*{authorName}">
             </div>
         </div>
-        <div class="col-12">
+        <div class="col-12 mb-5">
             <button type="submit" class="btn btn-primary">Kitap Ara</button>
         </div>
     </form>
-    <ul>
-        <li th:each="book : ${searchResults}" th:text="${book.title}"></li>
-    </ul>
+
+    <div class="p-3 my-5 rounded text-center bg-info"
+         th:if="${#lists.isEmpty(searchResults)}">
+        <p class="fs-5 text-dark">Arama kriterlerine uygun kitap yok veya henüz arama yapmadınız...
+            En az bir arama kriteri girerek "Kitap Ara" düğmesine basınız...
+        <p>
+    </div>
+
+    <table class="table table-striped table-secondary table-hover table-bordered border-dark align-middle mt-3"
+           th:unless="${#lists.isEmpty(searchResults)}">
+        <thead class="text-center">
+        <tr class="table-dark">
+            <th>#</th>
+            <th>Kitap Adı</th>
+            <th>Kitap Seri Adı</th>
+            <th>ISBN</th>
+            <th>Yazarı</th>
+            <th>Yayınevi</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book, bookStat : ${searchResults}">
+            <td th:text="${bookStat.index + 1}">1</td>
+            <td>
+                <span th:text="${book.title}">kitap adı</span><br>
+                <span style="font-style: italic" th:text="${book.subtitle}">alt ad</span>
+            </td>
+            <td th:text="${book.series}">kitap seri adı</td>
+            <td th:text="${book.isbn}">ISBN</td>
+            <td>
+                <div th:each="author : ${book.authors}">
+                    <span th:text="${author.fullName}">yazar</span>
+                </div>
+            </td>
+            <td th:text="${book.publisher.name}">yayınevi</td>
+        </tr>
+        </tbody>
+    </table>
 </main>
 </body>
 </html>

@@ -27,9 +27,7 @@
         </thead>
         <tbody>
         <tr th:each="book, bookStat : ${allBooks}">
-            <td>
-                <span th:text="${bookStat.index + 1}">1</span>
-            </td>
+            <td th:text="${bookStat.index + 1}">1</td>
             <td>
                 <span th:text="${book.title}">kitap adı</span><br>
                 <span style="font-style: italic" th:text="${book.subtitle}">alt ad</span>

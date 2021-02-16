@@ -141,10 +141,11 @@ public class BookController {
         return new ArrayList<>();
     }
 
-
     @GetMapping("/books/search")
-    public String searchBooksForm(@ModelAttribute(name = "searchResults") List<Book> results,
-            Model model) {
+    public String searchBooksForm(
+            @ModelAttribute(name = "searchResults") List<Book> results,
+            Model model)
+    {
         model.addAttribute("bookSearch", new BookSearch());
         model.addAttribute("searchResults", results);
 
@@ -152,10 +153,12 @@ public class BookController {
     }
 
     @PostMapping("/books/search")
-    public String searchBooks(@ModelAttribute BookSearch bookSearch,
-                              Model model) {
+    public String searchBooks(
+            @ModelAttribute BookSearch bookSearch,
+            Model model)
+    {
         model.addAttribute("searchResults", bookService.search(bookSearch));
-        System.out.println(bookSearch.getBookName());
+
         return "book/search-books";
     }
 }

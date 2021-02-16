@@ -6,10 +6,8 @@ import dev.milikkan.personallibrary.repository.BookRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,10 +32,21 @@ public class BookService {
     }
 
     public List<Book> search(BookSearch bookSearch) {
-        String bookName = bookSearch.getBookName();
-        if (bookName == null) return new ArrayList<>();
-        return this.findAll().stream()
-                .filter(book -> book.getTitle().equals(bookName))
-                .collect(Collectors.toList());
+        String bookName = bookSearch.getBookName().strip();
+        String bookSeries = bookSearch.getBookSeries().strip();
+        String bookIsbn = bookSearch.getIsbn().strip();
+        String bookAuthorName = bookSearch.getAuthorName().strip();
+
+        if (bookName.isBlank() && bookSeries.isBlank() && bookIsbn.isBlank() && bookAuthorName.isBlank()) {
+            return List.of();
+        }
+
+        return bookRepository
+                .findDistinctByTitleContainingAndIsbnContainingAndSeriesContainingAndAuthorsFullNameContaining(
+                        bookName,
+                        bookIsbn,
+                        bookSeries,
+                        bookAuthorName
+                );
     }
 }
