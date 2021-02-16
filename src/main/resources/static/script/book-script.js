@@ -1,50 +1,82 @@
+// author selection dropdown
 const authorsSelect = document.getElementById("bookAuthorsSelect");
+// publisher selection dropdown
 const publisherSelect = document.getElementById("bookPublisherSelect");
-const addNewAuthorBtn = document.querySelector(".active-add-btn");
-const removeNewAuthorBtn = document.querySelector(".active-remove-btn");
-
-const newAuthorList = document.getElementById("newAuthorList");
+// buttons to add selected author and publisher to the text inputs
 const addAuthorFromSelectBtn = document.getElementById("addAuthorFromSelect");
-
 const addPublisherFromSelectBtn = document.getElementById("addPublisherFromSelect");
+// division to hold the list of authors for the current book
+const newAuthorList = document.getElementById("newAuthorList");
+// add author button of the last author row
+const addAuthorRowBtn = findLastElement("author-add-btn");
+// remove author button of the last author row
+const removeAuthorRowBtn = findLastElement("author-remove-btn");
+// increment this for each uthor added, and decrement for each author removed
+let rowIndex = getAuthorRowCount() - 1;
 
-let rowIndex = 0;
+sortOptions(authorsSelect);
+sortOptions(publisherSelect);
+initializeAddRemoveAuthorButtons();
 
+addAuthorFromSelectBtn.addEventListener("click", () => {
+    const lastRow = findLastElement("author-row");
 
-const addNewAuthorRow = (e) => {
+    const authorNameInput = findLastElement("author-name-input");
+    const authorExpInput = findLastElement("author-exp-input");
+
+    const select = getSelectedOption(authorsSelect);
+
+    if (select.value !== "-1") {
+        authorNameInput.value = select.text;
+        authorExpInput.value = select.value;
+    }
+});
+
+addPublisherFromSelectBtn.addEventListener("click", () => {
+    const publisherNameInput = document.getElementById("addPublisherName");
+    const publisherExpInput = document.getElementById("addPublisherExplanation");
+
+    const select = getSelectedOption(publisherSelect);
+
+    if (select.value !== "-1") {
+        publisherNameInput.value = select.text;
+        publisherExpInput.value = select.value;
+    }
+});
+
+function addNewAuthorRow () {
     rowIndex++;
-    const prevRow = document.getElementById("lastRow");
-    prevRow.removeAttribute("id");
+    const prevAddBtn = findLastElement("author-add-btn");
+    const prevRemoveBtn = findLastElement("author-remove-btn");
+
     const lastRow = createNewAuthorRow(rowIndex);
     newAuthorList.appendChild(lastRow);
 
-    e.target.classList.add("disabled");
-    const addBtnList = document.querySelectorAll(".active-add-btn");
-    addBtnList[addBtnList.length - 1].addEventListener("click", addNewAuthorRow);
+    const lastAddBtn = findLastElement("author-add-btn");
+    lastAddBtn.addEventListener("click", addNewAuthorRow);
 
-    const removeBtnList = document.querySelectorAll(".active-remove-btn");
-    removeBtnList[removeBtnList.length - 1].addEventListener("click", removeNewAuthorRow);
-    removeBtnList[removeBtnList.length - 1].classList.remove("disabled");
-    removeBtnList[removeBtnList.length - 2].classList.add("disabled");
-};
+    const lastRemoveBtn = findLastElement("author-remove-btn");
+    lastRemoveBtn.addEventListener("click", removeNewAuthorRow);
 
-const removeNewAuthorRow = () => {
-    const lastRow = document.getElementById("lastRow");
+    prevAddBtn.setAttribute("disabled", "");
+    prevRemoveBtn.setAttribute("disabled", "");
+}
+
+function removeNewAuthorRow() {
+    const lastRow = findLastElement("author-row");
     if (rowIndex > 0) {
         const prevRow = lastRow.previousElementSibling;
         newAuthorList.removeChild(lastRow);
-        prevRow.id = "lastRow";
-        const addBtnList = document.querySelectorAll(".active-add-btn");
-        addBtnList[addBtnList.length - 1].classList.remove("disabled");
+
+        prevRow.querySelector(".author-add-btn").removeAttribute("disabled");
         if (rowIndex > 1) {
-            const removeBtnList = document.querySelectorAll(".active-remove-btn");
-            removeBtnList[removeBtnList.length - 1].classList.remove("disabled");
+            prevRow.querySelector(".author-remove-btn").removeAttribute("disabled");
         }
         rowIndex--;
     }
-};
+}
 
-const getSelectedOption = (sel) => {
+function getSelectedOption(sel) {
     var opt;
     for ( var i = 0, len = sel.options.length; i < len; i++ ) {
         opt = sel.options[i];
@@ -55,65 +87,72 @@ const getSelectedOption = (sel) => {
     return opt;
 }
 
-const createNewAuthorRow = function (rowIndex) {
+function createNewAuthorRow(rowIndex) {
     // create row div
     const rowDiv = document.createElement("div");
-    rowDiv.classList.add("row", "mb-3");
-    rowDiv.id = "lastRow";
+    rowDiv.classList.add("row", "mb-3", "author-row");
 
     const html = `
         <div class="col">
-            <input type="text" class="form-control" name="${'authors[' + rowIndex + '].fullName'}">
+            <input type="text" class="form-control author-name-input" name="${'authors[' + rowIndex + '].fullName'}">
         </div>
         <div class="col">
-            <input type="text" class="form-control" name="${'authors[' + rowIndex + '].explanation'}">
+            <input type="text" class="form-control author-exp-input" name="${'authors[' + rowIndex + '].explanation'}">
         </div>
         <div class="col align-self-end">
-            <button class="btn btn-primary active-add-btn" type="button">Yeni Ekle</button>
-            <button class="btn btn-danger active-remove-btn" type="button">Kaldır</button>
+            <button class="btn btn-primary author-add-btn" type="button">Yeni Ekle</button>
+            <button class="btn btn-danger author-remove-btn" type="button">Kaldır</button>
         </div>
     `;
     rowDiv.innerHTML = html;
     return rowDiv;
-};
+}
 
-addAuthorFromSelectBtn.addEventListener("click", () => {
-   // find the last row
-    const lastRow = document.getElementById("lastRow");
-    const inputs = lastRow.querySelectorAll(".form-control");
-    const authorNameInput = inputs[0];
-    const authorExpInput = inputs[1];
+function sortOptions(select) {
+    const options = select.options;
+    const defaultOption = options[0];
+    let optionsArray = [];
 
-    const select = getSelectedOption(authorsSelect);
-
-    // set values from authors object
-    authorNameInput.value= select.text;
-    authorExpInput.value = select.value;
-});
-
-addPublisherFromSelectBtn.addEventListener("click", () => {
-    const publisherNameInput = document.getElementById("addPublisherName");
-    const publisherExpInput = document.getElementById("addPublisherExplanation");
-
-    const select = getSelectedOption(publisherSelect);
-
-    // set values from authors object
-    publisherNameInput.value= select.text;
-    publisherExpInput.value = select.value;
-});
-
-/*function sortOptions(select) {
-    var options = select.options;
-    var optionsArray = [];
-    for (var i = 0; i < options.length; i++) {
-        optionsArray.push(options[i]);
+    for (let i = 1; i < options.length; i++) {
+        optionsArray[i] = options[i];
     }
+
     optionsArray = optionsArray.sort(function (a, b) {
         return a.innerHTML.toLowerCase().charCodeAt(0) - b.innerHTML.toLowerCase().charCodeAt(0);
     });
 
-    for (var i = 0; i <= options.length; i++) {
-        options[i] = optionsArray[i];
+    for (let i = 0; i < optionsArray.length; i++) {
+        options[i+1] = optionsArray[i];
     }
+
+    options[0] = defaultOption;
     options[0].selected = true;
-}*/
+}
+
+function getAuthorRowCount() {
+    return newAuthorList.querySelectorAll(".author-row").length;
+}
+
+function findAllElements(className) {
+    return  newAuthorList.querySelectorAll(`.${className}`);
+}
+
+function findLastElement(className) {
+    const list = findAllElements(className);
+    return list[list.length - 1];
+}
+
+function initializeAddRemoveAuthorButtons() {
+    addAuthorRowBtn.removeAttribute("disabled");
+    if (rowIndex > 0) {
+        removeAuthorRowBtn.removeAttribute("disabled");
+    }
+
+    findAllElements("author-add-btn").forEach(btn => {
+        btn.addEventListener("click", addNewAuthorRow);
+    });
+
+    findAllElements("author-remove-btn").forEach(btn => {
+        btn.addEventListener("click", removeNewAuthorRow);
+    });
+}

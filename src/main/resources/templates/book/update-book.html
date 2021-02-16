@@ -38,7 +38,7 @@
             <label for="bookAuthorsSelect" class="form-label">Yazar Seçimi: </label>
             <div class="input-group mb-4">
                 <select class="form-select" id="bookAuthorsSelect">
-                    <option selected>Mevcut Yazarlar</option>
+                    <option selected value="-1">Mevcut Yazarlar</option>
                     <option th:each="author : ${allAuthors}"
                             th:text="${author.fullName}"
                             th:value="${author.explanation}">yazar
@@ -51,22 +51,22 @@
 
             <div id="newAuthorList" class="border-top border-secondary border-2 p-2 mb-1">
                 <!--author row-->
-                <div id="lastRow" class="row mb-3" th:each="author, authorStat : ${bookForUpdate.authors}">
+                <div class="row mb-3 author-row" th:each="author, authorStat : ${bookForUpdate.authors}">
                     <div class="col">
-                        <label for="addAuthorFullName0" class="form-label">Yazar İsmi: </label>
-                        <input type="text" class="form-control" id="addAuthorFullName0"
+                        <label class="form-label" th:if="${authorStat.index == 0}">Yazar İsmi: </label>
+                        <input type="text" class="form-control author-name-input"
                                th:field="*{authors[__${authorStat.index}__].fullName}"
                                th:value="${author.fullName}">
                     </div>
                     <div class="col">
-                        <label for="addAuthorExplanation0" class="form-label">Yazar Açıklaması: </label>
-                        <input type="text" class="form-control" id="addAuthorExplanation0"
+                        <label class="form-label" th:if="${authorStat.index == 0}">Yazar Açıklaması: </label>
+                        <input type="text" class="form-control author-exp-input"
                                th:field="*{authors[__${authorStat.index}__].explanation}"
                                th:value="${author.explanation}">
                     </div>
                     <div class="col align-self-end">
-                        <button class="btn btn-primary active-add-btn" type="button">Yeni Ekle</button>
-                        <button class="btn btn-danger active-remove-btn disabled" type="button">Kaldır</button>
+                        <button class="btn btn-primary author-add-btn" type="button" disabled>Yeni Ekle</button>
+                        <button class="btn btn-danger author-remove-btn" type="button" disabled>Kaldır</button>
                     </div>
                 </div>
                 <!--end author row-->
@@ -77,7 +77,7 @@
             <label for="bookPublisherSelect" class="form-label">Yayınevi Seç: </label>
             <div class="input-group mb-4">
                 <select class="form-select" id="bookPublisherSelect">
-                    <option selected>Mevcut Yayınevleri</option>
+                    <option selected value="-1">Mevcut Yayınevleri</option>
                     <option th:each="publisher : ${allPublishers}"
                             th:text="${publisher.name}"
                             th:value="${publisher.explanation}">yazar
