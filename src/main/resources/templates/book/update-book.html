@@ -7,12 +7,16 @@
 <body>
 <main class="container bg-body p-3 mt-3 shadow rounded">
     <h2 class="fs-2 bg-secondary rounded p-2 text-light">Kitap Bilgilerini Güncelle:</h2>
-    <form method="post" th:object="${bookForUpdate}" th:action="'/books/' + ${bookForUpdate.id} + '/update'">
+    <form method="post" th:object="${book}" th:action="'/books/' + ${book.id} + '/update'">
         <div class="row my-3">
             <div class="col">
                 <label for="bookTitle" class="form-label">Kitap adı: </label>
-                <input type="text" class="form-control" id="bookTitle"
+                <input type="text" th:class="(${#fields.hasErrors('title')}? 'is-invalid ' : '') + 'form-control'"
+                       id="bookTitle" aria-describedby="validationBookTitleFeedback"
                        th:field="*{title}" th:value="*{title}">
+                <div id="validationBookTitleFeedback" class="invalid-feedback"
+                     th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Hata
+                </div>
             </div>
             <div class="col">
                 <label for="bookSubtitle" class="form-label">Kitap alt adı: </label>
@@ -29,8 +33,12 @@
             </div>
             <div class="col">
                 <label for="bookIsbn" class="form-label">ISBN: </label>
-                <input type="text" class="form-control" id="bookIsbn"
+                <input type="text" th:class="(${#fields.hasErrors('isbn')}? 'is-invalid ' : '') + 'form-control'"
+                       id="bookIsbn" aria-describedby="validationBookIsbnFeedback"
                        th:field="*{isbn}" th:value="*{isbn}">
+                <div id="validationBookIsbnFeedback" class="invalid-feedback"
+                     th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}">Hata
+                </div>
             </div>
         </div>
 
@@ -51,12 +59,15 @@
 
             <div id="newAuthorList" class="border-top border-secondary border-2 p-2 mb-1">
                 <!--author row-->
-                <div class="row mb-3 author-row" th:each="author, authorStat : ${bookForUpdate.authors}">
+                <div class="row mb-3 author-row" th:each="author, authorStat : ${book.authors}">
                     <div class="col">
                         <label class="form-label" th:if="${authorStat.index == 0}">Yazar İsmi: </label>
                         <input type="text" class="form-control author-name-input"
                                th:field="*{authors[__${authorStat.index}__].fullName}"
-                               th:value="${author.fullName}">
+                               th:value="${author.fullName}" aria-describedby="validationAuthorNameFeedback">
+                        <div id="validationAuthorNameFeedback" class="invalid-feedback"
+                             th:if="${#fields.hasErrors('authors')}" th:errors="*{authors}">yazar ismi eksik
+                        </div>
                     </div>
                     <div class="col">
                         <label class="form-label" th:if="${authorStat.index == 0}">Yazar Açıklaması: </label>
@@ -92,8 +103,12 @@
                 <div class="row mb-1">
                     <div class="col">
                         <label for="addPublisherName" class="form-label">Yayınevi Adı: </label>
-                        <input type="text" class="form-control" id="addPublisherName"
+                        <input type="text" th:class="(${#fields.hasErrors('publisher')}? 'is-invalid ' : '') + 'form-control'"
+                               id="addPublisherName" aria-describedby="validationPublisherNameFeedback"
                                th:field="*{publisher.name}" th:value="*{publisher.name}">
+                        <div id="validationPublisherNameFeedback" class="invalid-feedback"
+                             th:if="${#fields.hasErrors('publisher')}" th:errors="*{publisher}">yayınevi ismi eksik
+                        </div>
                     </div>
                     <div class="col">
                         <label for="addPublisherExplanation" class="form-label">Yayınevi Açıklaması: </label>

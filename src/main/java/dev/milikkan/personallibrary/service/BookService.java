@@ -1,5 +1,6 @@
 package dev.milikkan.personallibrary.service;
 
+import dev.milikkan.personallibrary.entity.Author;
 import dev.milikkan.personallibrary.entity.Book;
 import dev.milikkan.personallibrary.entity.BookSearch;
 import dev.milikkan.personallibrary.repository.BookRepository;
@@ -49,4 +50,11 @@ public class BookService {
                         bookAuthorName
                 );
     }
+
+    // check if there is any author without name
+    public boolean checkAuthorWithoutName(List<Author> authors) {
+        return authors.stream()
+                .anyMatch(author -> author.getFullName().isBlank());
+    }
+
 }

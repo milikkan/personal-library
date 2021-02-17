@@ -18,6 +18,10 @@ sortOptions(authorsSelect);
 sortOptions(publisherSelect);
 initializeAddRemoveAuthorButtons();
 
+document.querySelectorAll(".author-name-input").forEach(e => {
+    if (e.value === "") e.classList.add("is-invalid");
+});
+
 addAuthorFromSelectBtn.addEventListener("click", () => {
     const lastRow = findLastElement("author-row");
 
@@ -60,6 +64,10 @@ function addNewAuthorRow () {
 
     prevAddBtn.setAttribute("disabled", "");
     prevRemoveBtn.setAttribute("disabled", "");
+
+    document.querySelectorAll(".author-name-input").forEach(e => {
+        if (e.value !== "") e.classList.remove("is-invalid");
+    });
 }
 
 function removeNewAuthorRow() {
@@ -150,9 +158,12 @@ function initializeAddRemoveAuthorButtons() {
 
     findAllElements("author-add-btn").forEach(btn => {
         btn.addEventListener("click", addNewAuthorRow);
+        btn.parentNode.classList.add()
     });
 
     findAllElements("author-remove-btn").forEach(btn => {
         btn.addEventListener("click", removeNewAuthorRow);
     });
+
+
 }

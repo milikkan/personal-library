@@ -7,13 +7,17 @@
 <body>
 <main class="container bg-body p-3 mt-5 shadow rounded">
     <h2 class="fs-2 bg-secondary rounded p-2 text-light">Yazar Bilgilerini Güncelle:</h2>
-    <form method="post" th:object="${authorForUpdate}"
-          th:action="'/authors/' + ${authorForUpdate.id} + '/update'">
+    <form method="post" th:object="${author}"
+          th:action="'/authors/' + ${author.id} + '/update'">
         <div class="row my-4">
             <div class="col">
                 <label for="authorName" class="form-label">Yazar adı: </label>
-                <input type="text" class="form-control" id="authorName"
+                <input type="text" th:class="(${#fields.hasErrors('fullName')}? 'is-invalid ' : '') + 'form-control'"
+                       id="authorName" aria-describedby="validationAuthorNameFeedback"
                        th:field="*{fullName}" th:value="*{fullName}">
+                <div id="validationAuthorNameFeedback" class="invalid-feedback"
+                     th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Hata
+                </div>
             </div>
             <div class="col">
                 <label for="authorExp" class="form-label">Yazar açıklaması: </label>

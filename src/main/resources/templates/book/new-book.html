@@ -7,11 +7,16 @@
 <body>
 <main class="container bg-body p-3 mt-3 mb-5 shadow rounded">
     <h2 class="fs-2 bg-secondary rounded p-2 text-light">Yeni Kitap Girişi:</h2>
-    <form th:action="@{/books/new}" method="post" th:object="${newBook}">
+    <form th:action="@{/books/new}" method="post" th:object="${book}">
         <div class="row my-3">
             <div class="col">
                 <label for="bookTitle" class="form-label">Kitap adı: </label>
-                <input type="text" class="form-control" id="bookTitle" th:field="*{title}" placeholder="Yeni kitap">
+                <input type="text" th:class="(${#fields.hasErrors('title')}? 'is-invalid ' : '') + 'form-control'"
+                       id="bookTitle" aria-describedby="validationBookTitleFeedback"
+                       th:field="*{title}" placeholder="Yeni kitap">
+                <div id="validationBookTitleFeedback" class="invalid-feedback"
+                     th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Hata
+                </div>
             </div>
             <div class="col">
                 <label for="bookSubtitle" class="form-label">Kitap alt adı: </label>
@@ -26,7 +31,12 @@
             </div>
             <div class="col">
                 <label for="bookIsbn" class="form-label">ISBN: </label>
-                <input type="text" class="form-control" id="bookIsbn" th:field="*{isbn}">
+                <input type="text" th:class="(${#fields.hasErrors('isbn')}? 'is-invalid ' : '') + 'form-control'"
+                       id="bookIsbn" aria-describedby="validationBookIsbnFeedback"
+                       th:field="*{isbn}">
+                <div id="validationBookIsbnFeedback" class="invalid-feedback"
+                     th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}">Hata
+                </div>
             </div>
         </div>
 
@@ -49,22 +59,28 @@
                 <!-- new author row -->
                 <div class="row mb-3 author-row" th:each="author, authorStat : ${authorListForNewBook}">
                     <div class="col">
-                        <label class="form-label">Yazar İsmi: </label>
+                        <label class="form-label" th:if="${authorStat.index == 0}">Yazar İsmi: </label>
                         <input type="text" class="form-control author-name-input"
-                               th:field="*{authors[__${authorStat.index}__].fullName}">
+                               th:field="*{authors[__${authorStat.index}__].fullName}"
+                               aria-describedby="validationAuthorNameFeedback">
+                        <div id="validationAuthorNameFeedback" class="invalid-feedback"
+                             th:if="${#fields.hasErrors('authors')}" th:errors="*{authors}">yazar ismi eksik
+                        </div>
                     </div>
                     <div class="col">
-                        <label class="form-label">Yazar Açıklaması: </label>
+                        <label class="form-label" th:if="${authorStat.index == 0}">Yazar Açıklaması: </label>
                         <input type="text" class="form-control author-exp-input"
                                th:field="*{authors[__${authorStat.index}__].explanation}">
                     </div>
                     <div class="col align-self-end">
-                        <button class="btn btn-primary author-add-btn" type="button">Yeni Ekle</button>
+                        <button class="btn btn-primary author-add-btn" type="button" disabled>Yeni Ekle</button>
                         <button class="btn btn-danger author-remove-btn" type="button" disabled>Kaldır</button>
                     </div>
                 </div>
+
                 <!-- end new author row -->
             </div>
+
         </div>
         <div class="row mb-3 border border-secondary border-3 rounded p-2">
             <label for="bookPublisherSelect" class="form-label">Yayınevi Seç: </label>
@@ -86,7 +102,11 @@
                 <div class="row mb-1">
                     <div class="col">
                         <label for="addPublisherName" class="form-label">Yayınevi Adı: </label>
-                        <input type="text" class="form-control" id="addPublisherName" th:field="*{publisher.name}">
+                        <input type="text" th:class="(${#fields.hasErrors('publisher')}? 'is-invalid ' : '') + 'form-control'" id="addPublisherName"
+                               th:field="*{publisher.name}" aria-describedby="validationPublisherNameFeedback">
+                        <div id="validationPublisherNameFeedback" class="invalid-feedback"
+                             th:if="${#fields.hasErrors('publisher')}" th:errors="*{publisher}">yayınevi ismi eksik
+                        </div>
                     </div>
                     <div class="col">
                         <label for="addPublisherExplanation" class="form-label">Yayınevi Açıklaması: </label>

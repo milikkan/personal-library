@@ -7,13 +7,17 @@
 <body>
 <main class="container bg-body p-3 mt-5 shadow rounded">
     <h2 class="fs-2 bg-secondary rounded p-2 text-light">Yayınevi Bilgilerini Güncelle:</h2>
-    <form method="post" th:object="${publisherForUpdate}"
-          th:action="'/publishers/' + ${publisherForUpdate.id} + '/update'">
+    <form method="post" th:object="${publisher}"
+          th:action="'/publishers/' + ${publisher.id} + '/update'">
         <div class="row my-4">
             <div class="col">
                 <label for="publisherName" class="form-label">Yayınevi adı: </label>
-                <input type="text" class="form-control" id="publisherName"
+                <input type="text" th:class="(${#fields.hasErrors('name')}? 'is-invalid ' : '') + 'form-control'"
+                       id="publisherName" aria-describedby="validationPublisherNameFeedback"
                        th:field="*{name}" th:value="*{name}">
+                <div id="validationPublisherNameFeedback" class="invalid-feedback"
+                     th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Hata
+                </div>
             </div>
             <div class="col">
                 <label for="publisherExp" class="form-label">Yayınevi açıklaması: </label>

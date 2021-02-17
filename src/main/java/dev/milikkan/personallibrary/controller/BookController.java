@@ -1,9 +1,6 @@
 package dev.milikkan.personallibrary.controller;
 
-import dev.milikkan.personallibrary.entity.Author;
-import dev.milikkan.personallibrary.entity.Book;
-import dev.milikkan.personallibrary.entity.BookSearch;
-import dev.milikkan.personallibrary.entity.Publisher;
+import dev.milikkan.personallibrary.entity.*;
 import dev.milikkan.personallibrary.exception.BookNotFoundException;
 import dev.milikkan.personallibrary.service.AuthorService;
 import dev.milikkan.personallibrary.service.BookService;
@@ -11,8 +8,11 @@ import dev.milikkan.personallibrary.service.PublisherService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +23,6 @@ public class BookController {
     private final BookService bookService;
     private final AuthorService authorService;
     private final PublisherService publisherService;
-
-    @ModelAttribute(name = "newBook")
-    public Book newBook() {
-        return new Book();
-    }
 
     @ModelAttribute(name = "allBooks")
     public List<Book> allBooks() {
@@ -52,26 +47,52 @@ public class BookController {
     }
 
     @GetMapping("books/new")
-    public String newBookForm(Model model)
-    {
-        model.addAttribute("authorListForNewBook",
-                new ArrayList<Author>().add(new Author()));
+    public String newBookForm(Book book, Model model) {
+        // init author list for the new book
+        var authors = new ArrayList<Author>();
+        authors.add(new Author());
+        book.setAuthors(authors);
+
+        model.addAttribute("authorListForNewBook", book.getAuthors());
 
         return "book/new-book";
     }
 
     @PostMapping("books/new")
-    public String saveBook(Book newBook) {
-        var incomingAuthorList = newBook.getAuthors();
-        newBook.setAuthors(
+    public String saveBook(@Valid Book book, BindingResult bindingResult, Model model) {
+        // artifically generate field errors for missing author and publisher names
+        if (bookService.checkAuthorWithoutName(book.getAuthors())) {
+            bindingResult.addError(
+                    new FieldError(
+                            "book", "authors",
+                            "Yazar adı en az 1 karakter içermelidir")
+            );
+        }
+
+        if (book.getPublisher().getName().isBlank()) {
+            bindingResult.addError(
+                    new FieldError(
+                            "book", "publisher",
+                            "Yayınevi adı en az 1 karakter içermelidir")
+            );
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("book", book);
+            model.addAttribute("authorListForNewBook", book.getAuthors());
+            return "book/new-book";
+        }
+
+        var incomingAuthorList = book.getAuthors();
+        book.setAuthors(
                 authorService.sanitizeAuthorList(incomingAuthorList, false)
         );
 
-        var incomingPublisher = newBook.getPublisher();
+        var incomingPublisher = book.getPublisher();
         publisherService.sanitizePublisher(incomingPublisher)
-                .ifPresent(newBook::setPublisher);
+                .ifPresent(book::setPublisher);
 
-        bookService.save(newBook);
+        bookService.save(book);
         return "redirect:/books";
     }
 
@@ -81,15 +102,38 @@ public class BookController {
         Book bookForUpdate = bookService.findById(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        model.addAttribute("bookForUpdate", bookForUpdate);
+        model.addAttribute("book", bookForUpdate);
         return "book/update-book";
     }
 
     @PostMapping("books/{bookId}/update")
     public String updateBook(
             @PathVariable Long bookId,
-            @ModelAttribute(name = "bookForUpdate") Book bookForUpdate)
+            @ModelAttribute(name = "book") @Valid Book bookForUpdate,
+            BindingResult bindingResult)
     {
+        // artifically generate field errors for missing author and publisher names
+        if (bookService.checkAuthorWithoutName(bookForUpdate.getAuthors())) {
+            bindingResult.addError(
+                    new FieldError(
+                            "book", "authors",
+                            "Yazar adı en az 1 karakter içermelidir")
+            );
+        }
+
+        if (bookForUpdate.getPublisher().getName().isBlank()) {
+            bindingResult.addError(
+                    new FieldError(
+                            "book", "publisher",
+                            "Yayınevi adı en az 1 karakter içermelidir")
+            );
+        }
+
+        if (bindingResult.hasErrors()) {
+            bookForUpdate.setId(bookId);
+            return "book/update-book";
+        }
+
         Book oldBook = bookService.findById(bookId).get();
         oldBook.setTitle(bookForUpdate.getTitle());
         oldBook.setSubtitle(bookForUpdate.getSubtitle());

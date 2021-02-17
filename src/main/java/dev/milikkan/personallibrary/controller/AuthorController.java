@@ -7,8 +7,10 @@ import dev.milikkan.personallibrary.service.AuthorService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,19 +41,29 @@ public class AuthorController {
         Author authorForUpdate = authorService.findById(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
-        model.addAttribute("authorForUpdate", authorForUpdate);
+        model.addAttribute("author", authorForUpdate);
         return "author/update-author";
     }
 
     @PostMapping("/{authorId}/update")
     public String updateAuthor(
             @PathVariable Long authorId,
-            @ModelAttribute(name = "authorForUpdate") Author authorForUpdate)
+            @ModelAttribute(name = "author") @Valid Author authorForUpdate,
+            BindingResult bindingResult)
     {
-        Author oldAuthor = authorService.findById(authorId).get();
+
+        if (bindingResult.hasErrors()) {
+            authorForUpdate.setId(authorId);
+            return "author/update-author";
+        }
+
+        Author oldAuthor = authorService.findById(authorId)
+                .orElseThrow(() -> new AuthorNotFoundException(authorId));
         oldAuthor.setFullName(authorForUpdate.getFullName());
         oldAuthor.setExplanation(authorForUpdate.getExplanation());
+
         authorService.save(oldAuthor);
+
         return "redirect:/authors/";
     }
 

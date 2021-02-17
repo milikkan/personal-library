@@ -7,8 +7,10 @@ import dev.milikkan.personallibrary.service.PublisherService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,19 +32,28 @@ public class PublisherController {
         Publisher publisherForUpdate = publisherService.findById(publisherId)
                 .orElseThrow(() -> new PublisherNotFoundException(publisherId));
 
-        model.addAttribute("publisherForUpdate", publisherForUpdate);
+        model.addAttribute("publisher", publisherForUpdate);
         return "publisher/update-publisher";
     }
 
     @PostMapping("/{publisherId}/update")
     public String updatePublisher(
             @PathVariable Long publisherId,
-            @ModelAttribute(name = "publisherForUpdate") Publisher publisherForUpdate)
+            @ModelAttribute(name = "publisher") @Valid Publisher publisherForUpdate,
+            BindingResult bindingResult)
     {
-        Publisher oldPublisher = publisherService.findById(publisherId).get();
+        if (bindingResult.hasErrors()) {
+            publisherForUpdate.setId(publisherId);
+            return "publisher/update-publisher";
+        }
+
+        Publisher oldPublisher = publisherService.findById(publisherId)
+                .orElseThrow(() -> new PublisherNotFoundException(publisherId));
         oldPublisher.setName(publisherForUpdate.getName());
         oldPublisher.setExplanation(publisherForUpdate.getExplanation());
+
         publisherService.save(oldPublisher);
+
         return "redirect:/publishers/";
     }
 
