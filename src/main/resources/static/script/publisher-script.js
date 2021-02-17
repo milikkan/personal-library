@@ -6,7 +6,7 @@ showPublishedBooksBtn.forEach(btn => {
 });
 
 async function fetchPublisherData(id) {
-    const response = await fetch(`http://localhost:8080/publishers/${id}/books`, {
+    const response = await fetch(`/publishers/${id}/books`, {
         headers: {
             Accept: "application/json",
         },
